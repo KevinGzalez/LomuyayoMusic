@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080b12">
+  <title>LomuyayoMusic</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header><div class="brand"><span class="logo">LM</span><div><strong>LomuyayoMusic</strong><small>CONTROL CENTER</small></div></div><select id="guild"></select><span id="status" class="status">Conectando</span></header>
+  <main>
+    <section class="hero card">
+      <div id="cover" class="cover"><span>♪</span></div>
+      <div class="now"><p class="eyebrow">REPRODUCIENDO AHORA</p><h1 id="title">Nada reproduciéndose</h1><p id="artist">Añade música desde Discord para comenzar</p><div class="progress"><i id="progress"></i></div><div class="times"><span id="elapsed">0:00</span><span id="duration">0:00</span></div><div class="controls"><button data-action="previous" title="Anterior">↶</button><button id="toggle" data-action="pause" class="primary">Ⅱ</button><button data-action="skip">›</button><button data-action="stop" class="danger">■</button></div></div>
+      <aside class="sleep"><p class="eyebrow">SLEEP TIMER</p><div class="moon">☾</div><h2 id="sleepLabel">Apagado</h2><p id="sleepDetail">La música seguirá sonando</p><div class="sleep-grid"><button data-minutes="15">15 min</button><button data-minutes="30">30 min</button><button data-minutes="60">60 min</button><button data-action="sleep-track">Fin de canción</button></div><button data-action="sleep-cancel" class="wide">Cancelar temporizador</button></aside>
+    </section>
+    <section class="metrics"><article class="card"><span>CANCIONES</span><b id="plays">0</b></article><article class="card"><span>TIEMPO TOTAL</span><b id="hours">0h 0m</b></article><article class="card"><span>OYENTES</span><b id="users">0</b></article><article class="card"><span>EN COLA</span><b id="queued">0</b></article></section>
+    <section class="grid"><article class="card panel"><div class="panel-title"><h2>Próximas canciones</h2><span id="channel">Sin canal</span></div><ol id="queue"><li class="empty">La cola está vacía</li></ol></article><article class="card panel"><div class="panel-title"><h2>Actividad semanal</h2><span>Últimos 7 días</span></div><div id="chart" class="chart"></div></article></section>
+  </main>
+  <div id="toast"></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

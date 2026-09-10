@@ -1,0 +1,22 @@
+# Pega aquí el token secreto de tu bot (Discord Developer Portal > Bot).
+DISCORD_BOT_TOKEN=tu_token_aqui
+
+# Pega aquí el Application ID (Discord Developer Portal > General Information).
+CLIENT_ID=tu_client_id_aqui
+
+# Opcional: durante el desarrollo, registra comandos solo en este servidor.
+# Aparecen casi instantáneamente. Si se omite, se registran globalmente.
+GUILD_ID=
+
+# yt-dlp: en Oracle configura cookies, mweb y el runtime Node completo.
+YT_DLP_COOKIES_FILE=
+YT_DLP_PLAYER_CLIENT=mweb
+YT_DLP_JS_RUNTIME=node
+# Opcional: deja vacío para usar el binario incluido por ytdlp-nodejs.
+YT_DLP_PATH=
+
+# Dashboard web local. Usa WEB_HOST=0.0.0.0 solo si necesitas abrirlo en tu red.
+WEB_HOST=127.0.0.1
+WEB_PORT=8787
+WEB_DASHBOARD_TOKEN=
+LEGACY_LOCAL_DASHBOARD_ENABLED=false
