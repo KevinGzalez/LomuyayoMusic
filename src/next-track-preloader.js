@@ -1,8 +1,11 @@
 import { createReadStream } from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { createRapidApiAudioProvider } from './rapidapi-audio-provider.js';
+import { installQueueSafePlayPatch } from './queue-safe-play.js';
 
 export function createNextTrackPreloader(ytdlpConfig) {
+  installQueueSafePlayPatch();
+
   const rapidApi = createRapidApiAudioProvider();
   const files = new Map();
   const scheduled = new Map();
