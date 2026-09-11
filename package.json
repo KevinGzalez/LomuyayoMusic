@@ -9,7 +9,7 @@
     "setup": "node scripts/install-dependencies.js",
     "start": "node src/index.js",
     "deploy": "node src/deploy-commands.js",
-    "check": "node --check src/index.js && node --check src/deploy-commands.js && node --check src/commands.js && node --check src/player-panel.js && node --check src/youtube-mix.js && node --check src/youtube-search.js && node --check src/next-track-preloader.js && node --check src/rapidapi-audio-provider.js && node --check src/stats-db.js && node --check src/chart-generator.js && node --check src/sleep-timer.js && node --check src/web-dashboard.js && node --check src/web/app.js && node --check src/ytdlp-config.js && node --check scripts/install-dependencies.js"
+    "check": "node --check src/index.js && node --check src/deploy-commands.js && node --check src/commands.js && node --check src/player-panel.js && node --check src/youtube-mix.js && node --check src/youtube-search.js && node --check src/next-track-preloader.js && node --check src/rapidapi-audio-provider.js && node --check src/queue-safe-play.js && node --check src/stats-db.js && node --check src/chart-generator.js && node --check src/sleep-timer.js && node --check src/web-dashboard.js && node --check src/web/app.js && node --check src/ytdlp-config.js && node --check scripts/install-dependencies.js"
   },
   "engines": {
     "node": ">=22.12.0"
