@@ -7,7 +7,28 @@ function resolveGuildId(channel) {
   return channel?.guild?.id || channel?.guildId || channel?.guild_id || null;
 }
 
-async function enqueueIntoExistingQueue(player, queue, query, options) {
+function queueHasPlayback(queue) {
+  if (!queue) return false;
+
+  const currentTrack = queue.currentTrack || queue.current || queue.node?.currentTrack || null;
+  if (currentTrack) return true;
+
+  try {
+    if (queue.isPlaying?.()) return true;
+  } catch {}
+
+  try {
+    if (queue.node?.isPlaying?.()) return true;
+  } catch {}
+
+  try {
+    if (queue.node?.isPaused?.()) return true;
+  } catch {}
+
+  return false;
+}
+
+async function normalizeTracks(player, query, options) {
   let result = query;
 
   if (typeof query === 'string') {
@@ -16,29 +37,52 @@ async function enqueueIntoExistingQueue(player, queue, query, options) {
     });
   }
 
-  const playlist = result?.playlist ?? null;
-  const tracks = Array.isArray(result?.tracks)
-    ? result.tracks
-    : Array.isArray(result)
-      ? result
-      : result?.id
-        ? [result]
-        : [];
+  if (Array.isArray(result)) {
+    return { result, playlist: null, tracks: result.filter(Boolean) };
+  }
 
-  if (playlist) {
-    queue.addTrack(playlist);
-  } else if (tracks.length > 0) {
-    queue.addTrack(tracks.length === 1 ? tracks[0] : tracks);
-  } else {
+  if (result?.playlist?.tracks?.length) {
+    return {
+      result,
+      playlist: result.playlist,
+      tracks: result.playlist.tracks.filter(Boolean),
+    };
+  }
+
+  if (Array.isArray(result?.tracks) && result.tracks.length) {
+    return {
+      result,
+      playlist: result.playlist ?? null,
+      tracks: result.tracks.filter(Boolean),
+    };
+  }
+
+  if (result?.id) {
+    return { result, playlist: null, tracks: [result] };
+  }
+
+  return { result, playlist: null, tracks: [] };
+}
+
+async function enqueueIntoExistingQueue(player, queue, query, options) {
+  const { result, playlist, tracks } = await normalizeTracks(player, query, options);
+
+  if (!tracks.length) {
     throw new Error('No se encontraron pistas para añadir a la cola.');
   }
 
-  const firstTrack = tracks[0] ?? playlist?.tracks?.[0] ?? null;
-  console.log(`[Queue] ${tracks.length || playlist?.tracks?.length || 1} pista(s) añadida(s) sin interrumpir la reproducción actual.`);
+  // IMPORTANTE: añadimos las pistas explícitamente, no el objeto Playlist.
+  // Con algunos flujos de discord-player, queue.addTrack(playlist) puede provocar
+  // que se trate la colección como una reproducción nueva en vez de solo encolarla.
+  queue.addTrack(tracks);
+
+  const firstTrack = tracks[0];
+  console.log(`[Queue] ${tracks.length} pista(s) añadida(s) al final de la cola. La actual sigue sonando.`);
 
   return {
     queue,
     track: firstTrack,
+    playlist,
     searchResult: result,
   };
 }
@@ -65,12 +109,12 @@ export function installQueueSafePlayPatch() {
       .catch(() => {})
       .then(async () => {
         const existingQueue = this.nodes.get(guildId);
-        const hasActiveTrack = Boolean(existingQueue?.currentTrack) || existingQueue?.isPlaying?.() || existingQueue?.node?.isPlaying?.();
 
-        if (existingQueue && hasActiveTrack) {
+        if (existingQueue && queueHasPlayback(existingQueue)) {
           return enqueueIntoExistingQueue(this, existingQueue, query, options);
         }
 
+        // Solo usamos Player.play para arrancar cuando realmente no hay pista activa.
         return originalPlay.call(this, channel, query, options);
       });
 
@@ -83,5 +127,5 @@ export function installQueueSafePlayPatch() {
     }
   };
 
-  console.log('[Queue] Protección FIFO activada: nuevas canciones se encolan sin cortar la actual.');
+  console.log('[Queue] Protección FIFO v2 activada: solo la primera solicitud inicia reproducción; las demás se encolan.');
 }
