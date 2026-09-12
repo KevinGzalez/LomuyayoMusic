@@ -3,7 +3,7 @@ import { createAudioCache } from './audio-cache.js';
 import { createProviderMap } from './provider-map.js';
 import { createTrackIdentity } from './track-identity.js';
 import { createAudiusProvider } from './providers/audius-provider.js';
-import { createSoundCloudProvider } from './providers/soundcloud-provider.js';
+import { createJamendoProvider } from './providers/jamendo-provider.js';
 import { createRapidApiProvider } from './providers/rapidapi-provider.js';
 import { createSpotifyMetadataProvider } from './providers/spotify-metadata.js';
 
@@ -12,8 +12,8 @@ export function createAudioResolver(env = process.env) {
   const providerMap = createProviderMap(env);
   const spotify = createSpotifyMetadataProvider(env);
   const providers = [
-    createSoundCloudProvider(env),
     createAudiusProvider(env),
+    createJamendoProvider(env),
     createRapidApiProvider(env),
   ].filter((provider) => provider.enabled);
   const pending = new Map();
@@ -107,8 +107,6 @@ export function createAudioResolver(env = process.env) {
 
   async function finished(track) {
     const identity = createTrackIdentity(track);
-    // No borramos al finalizar: conservamos la anterior durante unos minutos y
-    // dejamos que TTL/LRU hagan la limpieza. Esto evita descargas/API repetidas.
     await cache.pin(identity.key, cache.previousGraceMs);
     void cache.cleanup();
   }
