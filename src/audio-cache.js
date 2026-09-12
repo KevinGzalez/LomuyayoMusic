@@ -50,7 +50,7 @@ export function createAudioCache(env = process.env) {
       return null;
     }
     const now = Date.now();
-    if (!entry.pinnedUntil && entry.expiresAt && entry.expiresAt < now) {
+    if ((entry.pinnedUntil || 0) <= now && entry.expiresAt && entry.expiresAt < now) {
       await remove(key);
       return null;
     }
